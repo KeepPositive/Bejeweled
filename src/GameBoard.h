@@ -5,8 +5,8 @@
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <SDL.h>
-#include <SDL_mixer.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
 #include <string>
 #include "GameObject.h"
 #include "Point.h"

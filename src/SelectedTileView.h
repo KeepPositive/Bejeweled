@@ -1,38 +1,38 @@
-#ifndef __Bejeweled_TileView_h__
-#define __Bejeweled_TileView_h__
+#ifndef __Bejeweled_SeletedTileView_h__
+#define __Bejeweled_SeletedTileView_h__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <SDL.h>
-#include "Drawable.h"
+#include <SDL/SDL.h>
+#include "TileView.h"
 
 namespace bejeweled {
 
 /**
- * Represents a drawable tile on the game board
+ * Represents a (selected) drawable tile on the game board
  */
-class TileView : public Drawable
+class SelectedTileView : public TileView
 {
 public:
     /**
      * Constructor
      * @param tileImg is the source surface of the tile. It is NOT to be freed by this class.
      */ 
-    TileView(SDL_Surface* tileImg);
+    SelectedTileView(SDL_Surface* tileImg);
 
     /// Empty ctor for empty tile
-    TileView();
+    SelectedTileView();
 
     /// Copy ctor - does not duplicate surface.
-    TileView(const TileView&);
+    SelectedTileView(const SelectedTileView&);
 
     /// Assignment operator - does not duplicate surface
-    TileView& operator=(const TileView&);
+    SelectedTileView& operator=(const SelectedTileView&);
 
     /// Destructor
-    virtual ~TileView();
+    virtual ~SelectedTileView();
 
     /**
      * Draws the tile on the given positions
@@ -41,21 +41,14 @@ public:
      */
     virtual void draw(SDL_Surface* dst, int x, int y) const;
 
-    /// Getters
-    int getWidth() const;
-    int getHeight() const;
-
 private:
-    /// Origin location for this tile (Upper left corner)
-    int m_x, m_y;
 
-    /// Tile image surface.
-    SDL_Surface* m_tileImg;
+    /// Color of the selected border and its width
+    static SDL_Color TILE_BORDER_COLOR;
+    static int TILE_BORDER_WIDTH;
 
-    /// is this an empty tile
-    bool m_isEmpty;
-}; // class TileView
+}; // class SelectedTileView
 
 } // namespace bejeweled
 
-#endif // __Bejeweled_TileView_h__
+#endif // __Bejeweled_SeletedTileView_h__

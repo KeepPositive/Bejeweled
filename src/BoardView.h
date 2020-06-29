@@ -5,7 +5,7 @@
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include <map>
 #include "Point.h"
 #include "Drawable.h"

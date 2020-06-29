@@ -1,5 +1,5 @@
 #include <string>
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include "ResourceManager.h"
 #include "SurfaceProxy.h"
 #include "GameException.h"

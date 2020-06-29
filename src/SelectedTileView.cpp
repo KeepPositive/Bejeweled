@@ -1,4 +1,4 @@
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include "SelectedTileView.h"
 #include "GameException.h"
 

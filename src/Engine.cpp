@@ -1,7 +1,7 @@
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL_mixer.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
+#include <SDL/SDL_mixer.h>
 #include "Engine.h"
 #include "GameObject.h"
 #include "SurfaceProxy.h"
@@ -13,7 +13,7 @@ namespace bejeweled {
 
 const int Engine::GAME_FPS = 10;
 const string Engine::WINDOW_TITLE = "Bejeweled";
-const string Engine::ICON_IMG = "resources\\icon.ico";
+const string Engine::ICON_IMG = "resources/icon.ico";
 
 Engine::Engine() : m_gameIcon(NULL), m_screen(NULL), m_curScene(NULL) {
     /// Initialize SDL subsystems.

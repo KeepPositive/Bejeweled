@@ -3,7 +3,7 @@
 #include "TileView.h"
 #include <ctime>
 #include <cstdlib>
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 namespace bejeweled {
 

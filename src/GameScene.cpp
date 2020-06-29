@@ -1,13 +1,13 @@
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 #include "GameScene.h"
 #include "SurfaceProxy.h"
 #include "GameException.h"
 
 namespace bejeweled {
 
-const std::string GameScene::BACKGROUND_IMG = "resources\\Background.png";
-const std::string GameScene::BACKGROUND_MUSIC = "resources\\music.ogg";
+const std::string GameScene::BACKGROUND_IMG = "resources/Background.png";
+const std::string GameScene::BACKGROUND_MUSIC = "resources/music.ogg";
 
 GameScene::GameScene(int x, int y, SDL_Surface* target)
 : GameObject(x, y, target),

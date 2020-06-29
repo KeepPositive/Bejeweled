@@ -5,8 +5,8 @@
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <Vector>
-#include <SDL.h>
+#include <vector>
+#include <SDL/SDL.h>
 #include "TileView.h"
 #include "SelectedTileView.h"
 

@@ -1,5 +1,5 @@
 #include "Timer.h"
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 namespace bejeweled {
 

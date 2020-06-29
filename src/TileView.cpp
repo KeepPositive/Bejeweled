@@ -1,4 +1,4 @@
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include "TileView.h"
 #include "GameException.h"
 #include "SurfaceProxy.h"

@@ -7,7 +7,7 @@
 namespace bejeweled {
 
 BoardModel::BoardModel(int numRows, int numCols, int numTileTypes)
-: m_numRows(numRows), m_numCols(numCols), m_numTileTypes(numTileTypes), m_grid(numRows, numCols, EMPTY_TILE)
+: m_numRows(numRows), m_numCols(numCols), m_numTileTypes(numTileTypes), m_grid(numRows, numCols, -1)
 {
     std::srand(std::time(0));
     fillBoard();

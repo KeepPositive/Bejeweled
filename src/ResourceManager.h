@@ -5,11 +5,11 @@
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <Vector>
+#include <vector>
 #include <string>
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <SDL_mixer.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
+#include <SDL/SDL_mixer.h>
 
 namespace bejeweled {
 
