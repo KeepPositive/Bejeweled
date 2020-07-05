@@ -1,7 +1,9 @@
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <sstream>
+#include <string_view>
 #include "GameButton.h"
 #include "GameException.h"
+#include "SDL_render.h"
 #include "SurfaceProxy.h"
 
 namespace bejeweled {
@@ -23,30 +25,28 @@ const SDL_Color GameButton::TIMER_TEXT_COLOR = {255, 255, 255};
 const SDL_Color GameButton::BUTTON_BACKCOLOR = {0, 100, 100};
 const float GameButton::GAME_TIME_SECS = 60.0f;
 
-GameButton::~GameButton() {
-    SDL_FreeSurface(m_fontSurface);
-    SDL_FreeSurface(m_buttonSurface);
-    // Fonts are closed by the resource manager
-}
 
-GameButton::GameButton(int x, int y,  SDL_Surface* target, int w, int h, const string& text,
-               SDL_Color textColor, SDL_Color buttonBackgroundColor) 
-    : GameObject(x, y, target),
+
+GameButton::GameButton(int x, int y, ResourceManager* resourceManager, 
+    int w, int h, const std::string_view text,
+    SDL_Color textColor, SDL_Color buttonBackgroundColor) 
+    : GameObject(x, y),
+    m_resManager(resourceManager),
     m_height(h),
     m_width(w),
-    m_text(text),
-    m_buttonSurface(SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0, 0, 0, 0)),
-    m_font(m_resManager.loadFont(FONT_PATH, FONT_SIZE)),
+    m_font(m_resManager->loadFont(FONT_PATH, FONT_SIZE)),
     m_textColor(textColor),
     m_buttonColor(buttonBackgroundColor),
-    m_fontSurface(NULL),
+    m_textTexture(nullptr),
     m_buttonStatus(READY),
     m_textOffsetX(TEXT_OFFSET_INITIAL)
 {  
-    if(!m_buttonSurface) {
-        throw GameException();
-    }
-    setText(m_text);
+    setText(text);
+}
+
+GameButton::~GameButton() {
+    SDL_DestroyTexture(m_textTexture);
+    // Fonts are closed by the resource manager
 }
 
 void GameButton::handleEvent(SDL_Event* event) {
@@ -74,25 +74,16 @@ void GameButton::update() {
     }
 }
 
-void GameButton::draw() {
+void GameButton::draw(SDL_Renderer* renderer) {
     SDL_Rect rect;
     rect.h = m_height;
     rect.w = m_width;
-    rect.x = 0;
-    rect.y = 0;
+    rect.x = BUTTON_OFFSET_X;
+    rect.y = BUTTON_OFFSET_Y;
 
-    // Fill a rectangle for the button
-    if(SDL_FillRect(m_buttonSurface, 
-                    &rect, 
-                    SDL_MapRGB(m_dstSurface->format, m_buttonColor.r, m_buttonColor.g, m_buttonColor.b))) 
-    {
-        throw GameException();
-    }
-
-
-    // Draw the button and then the text
-    SurfaceProxy::draw(m_originX, m_originY, m_buttonSurface, m_dstSurface);
-    SurfaceProxy::draw(m_originX + m_textOffsetX, m_originY + TEXT_OFFSET_Y, m_fontSurface, m_dstSurface);
+    SDL_SetRenderDrawColor(renderer, m_buttonColor.r, m_buttonColor.g, m_buttonColor.b, 255);
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_RenderCopy(renderer, m_textTexture, nullptr, &rect);
 }
 
 bool GameButton::isPointInObject(int x, int y) const {
@@ -100,13 +91,12 @@ bool GameButton::isPointInObject(int x, int y) const {
             y > m_originY && y < m_originY + m_height);
 }
 
-void GameButton::setText(const string& text) {
-    m_text = text;
-    SDL_FreeSurface(m_fontSurface);
-    m_fontSurface = TTF_RenderText_Blended(m_font, m_text.c_str(), m_textColor);
-    if(!m_fontSurface) {
-        throw GameException();
+void GameButton::setText(const std::string_view text) {
+    if (m_textTexture != nullptr) {
+        SDL_DestroyTexture(m_textTexture);
     }
+
+    m_textTexture = m_resManager->loadTextTexture(text, m_font, m_textColor);
 }
 
 GameButton::ButtonStatus GameButton::getButtonStatus() const {

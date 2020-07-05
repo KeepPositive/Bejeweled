@@ -5,7 +5,7 @@
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <map>
 #include "Point.h"
 #include "Drawable.h"
@@ -35,7 +35,7 @@ public:
     virtual ~BoardView();
 
     /// Draws the board on the given surface.
-    virtual void draw(SDL_Surface* dst, int x=0, int y=0) const;
+    virtual void draw(SDL_Renderer* renderer, int x=0, int y=0) const;
 
     /// get object in position
     bool isTileAtCoordinate(int x, int y) const;

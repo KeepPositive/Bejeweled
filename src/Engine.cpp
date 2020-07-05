@@ -1,9 +1,12 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "Engine.h"
 #include "GameObject.h"
+#include "ResourceManager.h"
+#include "SDL_render.h"
+#include "SDL_video.h"
 #include "SurfaceProxy.h"
 #include "GameException.h"
 #include "GameScene.h"
@@ -15,26 +18,34 @@ const int Engine::GAME_FPS = 10;
 const string Engine::WINDOW_TITLE = "Bejeweled";
 const string Engine::ICON_IMG = "resources/icon.ico";
 
-Engine::Engine() : m_gameIcon(NULL), m_screen(NULL), m_curScene(NULL) {
+Engine::Engine() {
     /// Initialize SDL subsystems.
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) ||  !IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) || TTF_Init()) {
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) || !IMG_Init(IMG_INIT_PNG) || TTF_Init()) {
         throw GameException();
     }
     
-    // Detect the size of the background image
-    // Must manually load icon, before calling to SDL_SetVideoMode. (Only under Windows)
-    Point backgroundDimensions = SurfaceProxy::getImageDimensions(GameScene::BACKGROUND_IMG);
-    m_gameIcon = m_resManager.loadSimpleImage(ICON_IMG);
+    m_window = SDL_CreateWindow(
+        Engine::WINDOW_TITLE.c_str(),
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600,
+        SDL_WINDOW_SHOWN);
+
+    if (!m_window) {
+        throw GameException();
+    }
+
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
+
+    if (!m_renderer) {
+        throw GameException();
+    }
+
+    m_resManager = new ResourceManager(m_renderer);
+
+    m_gameIcon = m_resManager->loadSimpleImage(ICON_IMG);
     #if defined(_WIN64) || defined(_WIN32)
     SDL_WM_SetIcon(m_gameIcon, NULL);
     SDL_WM_SetCaption(WINDOW_TITLE.c_str(),NULL);
     #endif
-
-    // Software rendering as this is a simple game. Can use hardware+doublebuf instead.
-    m_screen = SDL_SetVideoMode(backgroundDimensions.first, backgroundDimensions.second, 32,  SDL_SWSURFACE);
-    if(!m_screen) {
-        throw GameException();
-    }
 
     // Allow playing ogg audio files.
     if(!Mix_Init(MIX_INIT_OGG)) {
@@ -51,7 +62,8 @@ Engine::Engine() : m_gameIcon(NULL), m_screen(NULL), m_curScene(NULL) {
 
 Engine::~Engine() {
     delete m_curScene;
-    SDL_FreeSurface(m_screen);
+    SDL_DestroyRenderer(m_renderer);
+    SDL_DestroyWindow(m_window);
     Mix_Quit();
     Mix_CloseAudio();
     TTF_Quit();
@@ -60,7 +72,7 @@ Engine::~Engine() {
 
 void Engine::run() {
     // Set current scene to the game scene (we only have one scene in this game)
-    m_curScene = new GameScene(0, 0, m_screen);
+    m_curScene = new GameScene(0, 0, m_resManager);
     if(!m_curScene) {
         throw GameException();
     }
@@ -90,11 +102,13 @@ void Engine::run() {
         }
 
         m_curScene->update();
-        m_curScene->draw();
 
-        if(SDL_Flip(m_screen)) {
-            throw GameException();
-        }
+        SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+        SDL_RenderClear(m_renderer);
+
+        m_curScene->draw(m_renderer);
+
+        SDL_RenderPresent(m_renderer);
 
         // Regulate FPS
         if(m_fpsTimer.getTicks() < 1000.0 / GAME_FPS) {

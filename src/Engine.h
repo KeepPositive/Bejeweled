@@ -5,7 +5,7 @@
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <string>
 #include "GameObject.h"
 #include "ResourceManager.h"
@@ -40,10 +40,13 @@ private:
     Engine(const Engine&);
     Engine& operator=(const Engine&);
 
-    ResourceManager m_resManager;
-
     SDL_Surface* m_gameIcon;
-    SDL_Surface* m_screen;
+
+    SDL_Window* m_window;
+    SDL_Renderer* m_renderer;
+
+    ResourceManager* m_resManager;
+
     Timer m_fpsTimer;
 
     /// The current object/state to be displayed on the screen. (introduction screen/game screen/main menu)

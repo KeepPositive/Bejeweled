@@ -1,11 +1,12 @@
 #ifndef __Bejeweled_SeletedTileView_h__
 #define __Bejeweled_SeletedTileView_h__
 
+#include "SDL_render.h"
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "TileView.h"
 
 namespace bejeweled {
@@ -20,7 +21,7 @@ public:
      * Constructor
      * @param tileImg is the source surface of the tile. It is NOT to be freed by this class.
      */ 
-    SelectedTileView(SDL_Surface* tileImg);
+    SelectedTileView(SDL_Texture* tileImg);
 
     /// Empty ctor for empty tile
     SelectedTileView();
@@ -39,7 +40,7 @@ public:
      * @param x Horizontal origin point
      * @param y Vertical origin point
      */
-    virtual void draw(SDL_Surface* dst, int x, int y) const;
+    virtual void draw(SDL_Renderer* renderer, int x, int y) const;
 
 private:
 

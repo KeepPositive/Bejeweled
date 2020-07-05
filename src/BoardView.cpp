@@ -18,10 +18,11 @@ BoardView::BoardView(const BoardModel& model, const TileViewDrawer& tileDrawer,
 BoardView::~BoardView() {
 }
 
-void BoardView::draw(SDL_Surface* dst, int x, int y) const {
+void BoardView::draw(SDL_Renderer* renderer, int x, int y) const {
+    // m_tileDrawer.drawTile(renderer, 0, 0, 0);
     for(int j=0; j<m_numCols; ++j) {
         for(int i=0; i<m_numRows; ++i) {
-            m_tileDrawer.drawTile(dst,
+            m_tileDrawer.drawTile(renderer,
                                   m_originX + j*m_tileWidth,
                                   m_originY + i*m_tileHeight,
                                   m_boardModel.getTileId(i, j),

@@ -3,7 +3,7 @@
 #include "TileView.h"
 #include <ctime>
 #include <cstdlib>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 namespace bejeweled {
 
@@ -11,7 +11,7 @@ TileViewDrawer::TileViewDrawer() {
     std::srand((unsigned int)std::time(0));
 }
 
-void TileViewDrawer::addAvailableTileImage(SDL_Surface* img) {
+void TileViewDrawer::addAvailableTileImage(SDL_Texture* img) {
     m_tileViews.push_back(TileView(img));
     m_selectedTileViews.push_back(SelectedTileView(img));
 }
@@ -30,16 +30,16 @@ int TileViewDrawer::getTileWidth() const {
     return m_tileViews[0].getWidth();
 }
 
-void TileViewDrawer::drawTile(SDL_Surface* dst, int x, int y, int id, int isSelected) const {
+void TileViewDrawer::drawTile(SDL_Renderer* renderer, int x, int y, int id, int isSelected) const {
     if (m_tileViews.empty() || id < 0 || id > m_tileViews.size()) {
-        m_emptyTile.draw(dst, x, y);
+        m_emptyTile.draw(renderer, x, y);
         return;
     }
 
     if (isSelected) {
-        m_selectedTileViews[id].draw(dst, x, y);
+        m_selectedTileViews[id].draw(renderer, x, y);
     } else {
-        m_tileViews[id].draw(dst, x, y);
+        m_tileViews[id].draw(renderer, x, y);
     }
 }
 

@@ -5,8 +5,8 @@
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <string>
 #include "GameObject.h"
 #include "Point.h"
@@ -41,11 +41,8 @@ public:
     enum BoardState {UNINITIALIZED, FREEZE, READY, SELECT1, WAIT_SELECT2, SELECT2,
         MARK_EMPTY_SEQ, GRAVITATE, DROP_TILES, CHECK_NO_MOVES, NO_MOVES};
 
-    /// Constructor - initializes empty surface at (0,0). Receives a square tile size (in pixels)
-    GameBoard(int tileSize = 0);
-
     /// Constructor - initializes the given surface at the given (x,y) coordinates.
-    GameBoard(int x, int y, SDL_Surface* target = NULL, int tileSize = 0);
+    GameBoard(int x, int y, ResourceManager* resourceManager, int tileSize = 0);
 
     /**
      * Destructor - Does nothing.
@@ -56,7 +53,7 @@ public:
     /// Game object methods
     virtual void handleEvent(SDL_Event* event);
     virtual void update();
-    virtual void draw();
+    virtual void draw(SDL_Renderer* renderer);
     bool isPointInObject(int x, int y) const;
 
     /**
@@ -77,7 +74,7 @@ private:
     TileViewDrawer m_tileDrawer;
     BoardModel m_boardModel; /// Model MUST appear before the view in this class. (Initialization order)
     BoardView m_boardView;
-    ResourceManager m_resManager;
+    ResourceManager* m_resManager;
     Point m_selectedTile, m_prevSelectedTile;
     Mix_Chunk* m_effectSelection;
     Mix_Chunk* m_effectMatch;

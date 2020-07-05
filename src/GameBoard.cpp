@@ -1,7 +1,9 @@
 #include <utility>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #include "GameException.h"
 #include "GameBoard.h"
+#include "ResourceManager.h"
+#include "SDL_render.h"
 
 namespace bejeweled {
 
@@ -18,41 +20,22 @@ const string GameBoard::EFFECT_SELECTION = "resources/select.ogg";
 const string GameBoard::EFFECT_MATCH = "resources/match.ogg";
 const int GameBoard::NUM_COLORS = 5;
 
-GameBoard::GameBoard(int tileSize) 
-: GameObject(),
-  m_boardState(UNINITIALIZED), 
-  m_boardModel(NUM_ROWS, NUM_COLS, NUM_COLORS),
-  m_boardView(m_boardModel, m_tileDrawer, BOARD_OFFSET_X, BOARD_OFFSET_Y, tileSize),
-  m_selectedTile(-1, -1),
-  m_prevSelectedTile(-1, -1),
-  m_effectSelection(m_resManager.loadEffect(EFFECT_SELECTION)),
-  m_effectMatch(m_resManager.loadEffect(EFFECT_MATCH))
-{
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_BLUE_IMG));
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_GREEN_IMG));
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_PURPLE_IMG));
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_RED_IMG));
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_YELLOW_IMG));
-    
-    m_boardModel.fillBoard(); // /// Initialize the model with random tiles
-    m_boardState = FREEZE;
-}
-
-GameBoard::GameBoard(int x, int y, SDL_Surface* target, int tileSize) 
-: GameObject(x, y, target),
+GameBoard::GameBoard(int x, int y, ResourceManager* resourceManager, int tileSize) 
+: GameObject(x, y),
   m_boardState(UNINITIALIZED),
   m_boardModel(NUM_ROWS, NUM_COLS, NUM_COLORS),
   m_boardView(m_boardModel, m_tileDrawer, BOARD_OFFSET_X, BOARD_OFFSET_Y, tileSize),
+  m_resManager(resourceManager),
   m_selectedTile(-1, -1),
   m_prevSelectedTile(-1, -1),
-  m_effectSelection(m_resManager.loadEffect(EFFECT_SELECTION)),
-  m_effectMatch(m_resManager.loadEffect(EFFECT_MATCH))
+  m_effectSelection(m_resManager->loadEffect(EFFECT_SELECTION)),
+  m_effectMatch(m_resManager->loadEffect(EFFECT_MATCH))
 {
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_BLUE_IMG));
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_GREEN_IMG));
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_PURPLE_IMG));
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_RED_IMG));
-    m_tileDrawer.addAvailableTileImage(m_resManager.loadImage(TILE_YELLOW_IMG));
+    m_tileDrawer.addAvailableTileImage(m_resManager->loadImageTexture(TILE_BLUE_IMG));
+    m_tileDrawer.addAvailableTileImage(m_resManager->loadImageTexture(TILE_GREEN_IMG));
+    m_tileDrawer.addAvailableTileImage(m_resManager->loadImageTexture(TILE_PURPLE_IMG));
+    m_tileDrawer.addAvailableTileImage(m_resManager->loadImageTexture(TILE_RED_IMG));
+    m_tileDrawer.addAvailableTileImage(m_resManager->loadImageTexture(TILE_YELLOW_IMG));
 
     m_boardModel.fillBoard(); // Initialize the model with random tiles
     m_boardState = FREEZE;
@@ -152,9 +135,9 @@ void GameBoard::update() {
         break;
     };
 }
-void GameBoard::draw() {
+void GameBoard::draw(SDL_Renderer* renderer) {
     if(m_boardState != FREEZE && m_boardState != UNINITIALIZED) {
-        m_boardView.draw(m_dstSurface);
+        m_boardView.draw(renderer);
     }
 }
 

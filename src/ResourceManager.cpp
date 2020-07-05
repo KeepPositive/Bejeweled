@@ -1,14 +1,16 @@
 #include <string>
-#include <SDL/SDL.h>
+#include <string_view>
+#include <SDL2/SDL.h>
 #include "ResourceManager.h"
+#include "SDL_render.h"
+#include "SDL_surface.h"
 #include "SurfaceProxy.h"
 #include "GameException.h"
 
 namespace bejeweled {
 
-using std::string;
-
-ResourceManager::ResourceManager() 
+ResourceManager::ResourceManager(SDL_Renderer* renderer)
+    : m_renderer(renderer)
 { }
 
 ResourceManager::~ResourceManager() {
@@ -30,21 +32,31 @@ ResourceManager::~ResourceManager() {
     m_effects.clear();
 }
 
-SDL_Surface* ResourceManager::loadImage(const string& path) {
-    SDL_Surface* img = SurfaceProxy::loadOptimizedImage(path);
-    m_surfaces.push_back(img);
-    return img;
-}
-
-
-SDL_Surface* ResourceManager::loadSimpleImage(const string& path) {
+SDL_Surface* ResourceManager::loadImage(const std::string_view path) {
     SDL_Surface* img = SurfaceProxy::loadRegularImage(path);
     m_surfaces.push_back(img);
     return img;
 }
 
-TTF_Font* ResourceManager::loadFont(const string& path, int size) {
-    TTF_Font* font = TTF_OpenFont(path.c_str(), size);
+
+SDL_Surface* ResourceManager::loadSimpleImage(const std::string_view path) {
+    SDL_Surface* img = SurfaceProxy::loadRegularImage(path);
+    m_surfaces.push_back(img);
+    return img;
+}
+
+SDL_Texture* ResourceManager::loadImageTexture(const std::string_view path) {
+    SDL_Surface* img_surface = SurfaceProxy::loadRegularImage(path);
+
+    SDL_Texture* img_texture = SDL_CreateTextureFromSurface(m_renderer, img_surface);
+
+    SDL_FreeSurface(img_surface);
+
+    return img_texture;
+}
+
+TTF_Font* ResourceManager::loadFont(const std::string_view path, int size) {
+    TTF_Font* font = TTF_OpenFont(path.data(), size);
     if(!font) {
         throw GameException();
     }
@@ -52,8 +64,18 @@ TTF_Font* ResourceManager::loadFont(const string& path, int size) {
     return font;
 }
 
-Mix_Music* ResourceManager::loadMusic(const string& path) {
-    Mix_Music* music = Mix_LoadMUS(path.c_str());
+SDL_Texture* ResourceManager::loadTextTexture(const std::string_view text, TTF_Font* font, const SDL_Color& fontColor) {
+    SDL_Surface* font_surface = TTF_RenderText_Blended(font, text.data(), fontColor);
+    
+    SDL_Texture* font_texture = SDL_CreateTextureFromSurface(m_renderer, font_surface);
+
+    if(!font_texture) {
+        throw GameException();
+    }
+}
+
+Mix_Music* ResourceManager::loadMusic(const std::string_view path) {
+    Mix_Music* music = Mix_LoadMUS(path.data());
     if(!music) {
         throw GameException();
     }
@@ -61,8 +83,8 @@ Mix_Music* ResourceManager::loadMusic(const string& path) {
     return music;
 }
 
-Mix_Chunk* ResourceManager::loadEffect(const string& path) {
-    Mix_Chunk* effect = Mix_LoadWAV(path.c_str());
+Mix_Chunk* ResourceManager::loadEffect(const std::string_view path) {
+    Mix_Chunk* effect = Mix_LoadWAV(path.data());
     if(!effect) {
         throw GameException();
     }

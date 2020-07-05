@@ -1,6 +1,9 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include "GameButton.h"
 #include "GameScene.h"
+#include "ResourceManager.h"
+#include "SDL_render.h"
 #include "SurfaceProxy.h"
 #include "GameException.h"
 
@@ -9,17 +12,25 @@ namespace bejeweled {
 const std::string GameScene::BACKGROUND_IMG = "resources/Background.png";
 const std::string GameScene::BACKGROUND_MUSIC = "resources/music.ogg";
 
-GameScene::GameScene(int x, int y, SDL_Surface* target)
-: GameObject(x, y, target),
+GameScene::GameScene(int x, int y, ResourceManager* resourceManager)
+: GameObject(x, y),
   m_isGameover(false),
-  m_resManager(),
-  m_backgroundImage(m_resManager.loadImage(BACKGROUND_IMG)),
-  m_music(m_resManager.loadMusic(BACKGROUND_MUSIC)),
+  m_resManager(resourceManager),
+  m_backgroundImage(m_resManager->loadImageTexture(BACKGROUND_IMG)),
+  m_music(m_resManager->loadMusic(BACKGROUND_MUSIC)),
   m_gameBoard(GameBoard::BOARD_OFFSET_X,
               GameBoard::BOARD_OFFSET_Y,
-              m_dstSurface,
-              SurfaceProxy::getImageDimensions(GameBoard::TILE_BLUE_IMG).first),
-  m_button(GameButton::BUTTON_OFFSET_X, GameButton::BUTTON_OFFSET_Y, m_dstSurface)
+              m_resManager,
+              65),
+  m_button(
+    GameButton::BUTTON_OFFSET_X,
+    GameButton::BUTTON_OFFSET_Y,
+    m_resManager,
+    GameButton::BUTTON_SIZE_X,
+    GameButton::BUTTON_SIZE_Y,
+    GameButton::TIMER_BUTTON_TEXT,
+    GameButton::TIMER_TEXT_COLOR,
+    GameButton::BUTTON_BACKCOLOR)
 { }
 
 GameScene::~GameScene() {
@@ -45,14 +56,15 @@ void GameScene::update() {
         m_gameBoard.update();
     } else if(buttonStatus == GameButton::GAMEOVER || buttonStatus == GameButton::NOMOVES) {
         m_isGameover = true;
-        //Mix_HaltMusic(); - To stop the music from playing upon "game over".
+        // Mix_HaltMusic(); // To stop the music from playing upon "game over".
     }
 }
 
-void GameScene::draw() {
-    SurfaceProxy::draw(0, 0, m_backgroundImage, m_dstSurface);
-    m_gameBoard.draw();
-    m_button.draw();
+void GameScene::draw(SDL_Renderer* renderer) {
+    SDL_Rect dst{0, 0, 800, 600};
+    SDL_RenderCopy(renderer, m_backgroundImage, nullptr, &dst);
+    m_gameBoard.draw(renderer);
+    m_button.draw(renderer);
 }
 
 void GameScene::handleEvent(SDL_Event* event) {

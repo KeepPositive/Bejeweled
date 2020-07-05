@@ -5,9 +5,10 @@
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <string>
+#include <string_view>
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "Timer.h"
@@ -44,14 +45,14 @@ public:
     /// Indicates the current game status 
     enum ButtonStatus {READY, TIMER, GAMEOVER, NOMOVES};
 
-    GameButton(int x = BUTTON_OFFSET_X,
-           int y = BUTTON_OFFSET_Y,
-           SDL_Surface* target = NULL,
-           int w = BUTTON_SIZE_X,
-           int h = BUTTON_SIZE_Y,
-           const string& text = TIMER_BUTTON_TEXT,
-           SDL_Color textColor = TIMER_TEXT_COLOR,
-           SDL_Color buttonBackgroundColor = BUTTON_BACKCOLOR);
+    GameButton(int x,
+           int y,
+           ResourceManager* resourceManager,
+           int w,
+           int h,
+           const std::string_view text,
+           SDL_Color textColor,
+           SDL_Color buttonBackgroundColor);
 
     /**
      * Destructor - frees the contained button and text surfaces.
@@ -60,11 +61,11 @@ public:
     virtual ~GameButton();
 
     /// Changes the button text
-    void setText(const string& text);
+    void setText(const std::string_view text);
 
     virtual void handleEvent(SDL_Event* event);
     virtual void update();
-    virtual void draw();
+    virtual void draw(SDL_Renderer* renderer);
     virtual bool isPointInObject(int x, int y) const;
     ButtonStatus getButtonStatus() const;
 
@@ -76,10 +77,9 @@ private:
     GameButton(const GameButton&);
     GameButton& operator=(const GameButton&);
 
-    ResourceManager m_resManager;
+    ResourceManager* m_resManager;
 
-    SDL_Surface* m_buttonSurface;
-    SDL_Surface* m_fontSurface;
+    SDL_Texture* m_textTexture;
     TTF_Font* m_font;
     string m_text;
     SDL_Color m_textColor;

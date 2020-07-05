@@ -1,11 +1,12 @@
 #ifndef __Bejeweled_GameScene_h__
 #define __Bejeweled_GameScene_h__
 
+#include "SDL_render.h"
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 #pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <string>
 #include "ResourceManager.h"
 #include "GameButton.h"
@@ -25,7 +26,7 @@ public:
     static const std::string BACKGROUND_MUSIC;
 
     /// Constructor
-    GameScene(int x, int y, SDL_Surface* target = NULL);
+    GameScene(int x, int y, ResourceManager* resourceManager);
 
     /// Destructor
     virtual ~GameScene();
@@ -35,7 +36,7 @@ public:
 
     /// Inherited Game loop functions 
     virtual void update();
-    virtual void draw();
+    virtual void draw(SDL_Renderer* renderer);
     virtual void handleEvent(SDL_Event* event);
     virtual bool isPointInObject(int x, int y) const;
     
@@ -48,11 +49,10 @@ private:
     bool m_isGameover;
 
     /// Resource manager for background image and music
-    ResourceManager m_resManager;
+    ResourceManager* m_resManager;
 
     /// Represents the game screens
-    SDL_Surface* message;
-    SDL_Surface* m_backgroundImage;
+    SDL_Texture* m_backgroundImage;
 
     /// Background music
     Mix_Music* m_music;

@@ -7,12 +7,10 @@
 
 #include <utility>
 #include <string>
-#include "SDL.h"
+#include "SDL2/SDL.h"
 #include "Point.h"
 
 namespace bejeweled {
-
-using std::string;
 
 /**
  * Handles loading of Surfaces. 
@@ -21,21 +19,12 @@ using std::string;
  */
 class SurfaceProxy
 {
-public:
-    /**
-     * Proxies loading of SDL_surface and returns an optimized version.
-     * We do not want SDL to change the image format on every blit - so we will convert it.
-     * (For instance, if the image has 24-bit depth, and the screen is 32-bit)
-     *
-     * Should only be called after we set the video mode with SDL_SetVideoMode.
-     */ 
-    static SDL_Surface* loadOptimizedImage(const string& path);
-    
+public:    
     /**
      * Proxies the call for IMG_Load. Does NOT optimize the loaded image.
      * This can be safely called before SDL_SetVideoMode (for example, in order to load an icon)
      */
-    static SDL_Surface* loadRegularImage(const string& path);
+    static SDL_Surface* loadRegularImage(const std::string_view path);
 
     /**
      * Used to draw the surface according to the given parameters.
@@ -45,7 +34,7 @@ public:
     /**
      * Returns the dimensions of an image at the given path.
      */
-    static Point getImageDimensions(const string& path);
+    static Point getImageDimensions(const std::string_view path);
 
 private:
     // Prevent Creation, Copying and Assignment

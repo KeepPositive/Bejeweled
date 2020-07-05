@@ -1,5 +1,8 @@
 # Build directory
 build/
 
-# Compilation Command symlink
+# clangd cache
+.clangd/
+
+# Compilation Command symlink for clangd
 compile_commands.json
