@@ -1,9 +1,6 @@
 #ifndef __Bejeweled_GameBoard_h__
 #define __Bejeweled_GameBoard_h__
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-#pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>

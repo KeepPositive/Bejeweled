@@ -14,7 +14,7 @@
 
 namespace bejeweled {
 
-const int Engine::GAME_FPS = 10;
+const int Engine::GAME_FPS = 20;
 const string Engine::WINDOW_TITLE = "Bejeweled";
 const string Engine::ICON_IMG = "resources/icon.ico";
 
@@ -42,10 +42,8 @@ Engine::Engine() {
     m_resManager = new ResourceManager(m_renderer);
 
     m_gameIcon = m_resManager->loadSimpleImage(ICON_IMG);
-    #if defined(_WIN64) || defined(_WIN32)
-    SDL_WM_SetIcon(m_gameIcon, NULL);
-    SDL_WM_SetCaption(WINDOW_TITLE.c_str(),NULL);
-    #endif
+
+    SDL_SetWindowIcon(m_window, m_gameIcon);
 
     // Allow playing ogg audio files.
     if(!Mix_Init(MIX_INIT_OGG)) {

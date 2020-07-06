@@ -2,9 +2,6 @@
 #define __Bejeweled_GameScene_h__
 
 #include "SDL_render.h"
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-#pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <SDL2/SDL.h>
 #include <string>

@@ -1,9 +1,6 @@
 #ifndef __Bejeweled_TileViewDrawer_h__
 #define __Bejeweled_TileViewDrawer_h__
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-#pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <vector>
 #include <SDL2/SDL.h>
